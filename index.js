@@ -42,13 +42,12 @@ const textModel = require("./models/textModel");
 
 
 
-const {validInputValue,validOnlyCharacters,validEmail,validNumberL} = require('./validations');
+const {validInputValue,validOnlyCharacters,validEmail} = require('./validations');
 
 
 
 
 
-// Assuming you have already imported required modules and initialized the Express app
 
 app.post('/Login_Page', async (req, res) => {
   try {
@@ -64,7 +63,6 @@ app.post('/Login_Page', async (req, res) => {
       throw new Error('Invalid Password: Only numbers are allowed');
     }
 
-    // Here, assuming `userModel` is a valid Mongoose model for database operations
     let z = await userModel.create(data);
 
     let token = jwt.sign(
@@ -72,7 +70,7 @@ app.post('/Login_Page', async (req, res) => {
         user_id: data.email_id,
         user_phone: data.password,
       },
-      "project01" // Replace this with your secret key
+      "project01" 
     );
 
     res.status(201).json({ status: true, message: "Logged in successfully", data: token });
@@ -83,7 +81,7 @@ app.post('/Login_Page', async (req, res) => {
 
 const authentication = function (req, res, next) {
   try {
-    let token = req.cookies['auth_token']; // Retrieve the token from the cookie
+    let token = req.cookies['auth_token']; 
 
     if (!token) {
       return res.status(401).send({ status: false, message: "Necessary authentication token is missing" });
@@ -94,9 +92,8 @@ const authentication = function (req, res, next) {
         return res.status(403).send({ status: false, message: "Failed authentication" });
       }
 
-      // Store the decoded user data in the request object
       req.user = Decoded;
-      next(); // Call next to proceed to the next middleware or route handler
+      next(); 
     });
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
@@ -114,10 +111,8 @@ app.post('/Home_Page/submitText/:user_id', authentication, async (req, res) => {
     }
 
 
-    // Assuming you have stored the user ID in req.user.user_id during authentication
     const userId = req.params.user_id;
 
-    // Store the data in the cookie (using a signed cookie for security)
     res.cookie('user_data', data, { signed: true });
 
     let z = await textModel.create(data);
